@@ -2,25 +2,23 @@ package com.krzysztofgluczyk.malapaczkarnia
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.SystemClock
-import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.gson.Gson
 import com.krzysztofgluczyk.malapaczkarnia.databinding.ActivityMainBinding
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
+
+    val activtyScope = CoroutineScope(Job())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,18 +49,16 @@ class MainActivity : AppCompatActivity() {
 
         val donutService = retrofit.create(DonutService::class.java)
 
-        donutService.getDonuts().enqueue(object : Callback<List<Donut>> {
-            override fun onResponse(call: Call<List<Donut>>, response: Response<List<Donut>>) {
-                response.body()?.forEach {
-                    Log.i("DONUT", it.toString())
+        activtyScope.launch {
+            donutService.getDonuts().run {
+                map { it.title }.reduce { donut, acc ->
+                    "$acc:$donut"
                 }
-                Toast.makeText(this@MainActivity, "Is success: ${response.isSuccessful}", Toast.LENGTH_SHORT).show()
+            }.let { wynik ->
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(this@MainActivity, wynik, Toast.LENGTH_SHORT).show()
+                }
             }
-
-            override fun onFailure(call: Call<List<Donut>>, t: Throwable) {
-                Log.e("RETROFIT", "Failed to fetch donuts", t)
-            }
-
-        })
+        }
     }
 }
