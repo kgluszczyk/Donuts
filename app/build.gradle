@@ -19,6 +19,17 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
+    flavorDimensions "env"
+    productFlavors {
+        dev {
+            dimension "env"
+            buildConfigField "String", "BASE_URL", "\"https://my-json-server.typicode.com/kgluszczyk/\""
+        }
+        production {
+            dimension "env"
+            buildConfigField "String", "BASE_URL", "\"https://my-json-server.typicode.com/kgluszczyk/\""
+        }
+    }
 
     buildTypes {
         release {
@@ -49,4 +60,10 @@ dependencies {
     def nav_version = "2.3.3"
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
+
+    def retrofit_version = "2.9.0"
+    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    implementation "com.squareup.okhttp3:okhttp:4.9.0"
+    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
 }
