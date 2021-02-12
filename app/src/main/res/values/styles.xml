@@ -7,6 +7,6 @@
     </style>
 
     <style name="CustomTextView" parent="Widget.MaterialComponents.TextView">
-        <item name="android:textColor">?colorOnPrimary</item>
+        <item name="android:textColor">?colorAccent</item>
     </style>
 </resources>
