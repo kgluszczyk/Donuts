@@ -3,9 +3,10 @@ package com.krzysztofgluczyk.malapaczkarnia
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.findNavController
 import com.krzysztofgluczyk.malapaczkarnia.databinding.ActivityOrderBinding
+import kotlin.random.Random
 
 class OrderActivity : AppCompatActivity() {
 
@@ -32,14 +33,9 @@ class OrderActivity : AppCompatActivity() {
                 android.R.anim.slide_in_left,
                 android.R.anim.slide_out_right
             )
-            .add(android.R.id.content, InfoFragment())
+            .add(R.id.fragment_container, InfoFragment())
             .addToBackStack(null)
             .commit()
-    }
-
-    override fun onBackPressed() {
-        Toast.makeText(this, "Pop", Toast.LENGTH_SHORT).show()
-        supportFragmentManager.popBackStack()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -49,7 +45,15 @@ class OrderActivity : AppCompatActivity() {
                 return true
             }
             R.id.navigate -> {
-                Toast.makeText(this, item.title, Toast.LENGTH_SHORT).show()
+                findNavController(R.id.navHost).run {
+                    when (currentDestination?.id) {
+                        R.id.infoFragment -> if (Random.nextBoolean()) R.id.infoFragment2 else R.id.infoFragment3
+                        R.id.infoFragment2, R.id.infoFragment3 -> R.id.infoFragment
+                        else -> throw IllegalAccessException()
+                    }.let {
+                        navigate(it)
+                    }
+                }
                 return true
             }
         }
