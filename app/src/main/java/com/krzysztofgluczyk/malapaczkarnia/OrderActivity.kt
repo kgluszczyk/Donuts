@@ -24,6 +24,22 @@ class OrderActivity : AppCompatActivity() {
                 zamowienie.text = it
             }
         }
+        supportFragmentManager
+            .beginTransaction()
+            .setCustomAnimations(
+                android.R.anim.slide_in_left,
+                android.R.anim.slide_out_right,
+                android.R.anim.slide_in_left,
+                android.R.anim.slide_out_right
+            )
+            .add(android.R.id.content, InfoFragment())
+            .addToBackStack(null)
+            .commit()
+    }
+
+    override fun onBackPressed() {
+        Toast.makeText(this, "Pop", Toast.LENGTH_SHORT).show()
+        supportFragmentManager.popBackStack()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
