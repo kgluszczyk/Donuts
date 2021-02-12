@@ -2,14 +2,16 @@ package com.krzysztofgluczyk.malapaczkarnia
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
 import com.krzysztofgluczyk.malapaczkarnia.databinding.ActivityMainBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
@@ -21,7 +23,9 @@ class MainActivity : AppCompatActivity() {
 
     val activtyScope = CoroutineScope(Job())
 
-    val donutAdapter = DonutAdapter()
+    val donutAdapter = DonutAdapter {
+        Toast.makeText(this, "Kliknięto: $it", Toast.LENGTH_SHORT).show()
+    }
 
     val gson = Gson()
 
@@ -58,11 +62,19 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onDestroy() {
+        activtyScope.cancel()
+        super.onDestroy()
+    }
+
     private fun getPaczki() {
         activtyScope.launch {
             withContext(Dispatchers.Main) {
-                donutAdapter.setData(donutService.getDonuts())
-                donutAdapter.notifyDataSetChanged()
+                val list = donutService.getDonuts()
+                if (isActive) {
+                    donutAdapter.setData(list + list + list + list)
+                    donutAdapter.notifyDataSetChanged()
+                }
             }
         }
     }
