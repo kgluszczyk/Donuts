@@ -16,8 +16,8 @@
         app:layout_constraintTop_toBottomOf="@id/title" />
 
     <TextView
-        style="@style/Header"
         android:id="@+id/title"
+        style="@style/Header"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
@@ -37,4 +37,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/paczek"
         tools:text="The default resource set must also include any default drawables and layouts, and can include other types of resources such as animations:" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/paczki"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        app:spanCount="2"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/zamowienie"
+        tools:listitem="@layout/donut_item" />
 </androidx.constraintlayout.widget.ConstraintLayout>

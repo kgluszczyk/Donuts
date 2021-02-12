@@ -2,8 +2,9 @@ package com.krzysztofgluczyk.malapaczkarnia
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
 import com.krzysztofgluczyk.malapaczkarnia.databinding.ActivityMainBinding
 import kotlinx.coroutines.CoroutineScope
@@ -20,6 +21,23 @@ class MainActivity : AppCompatActivity() {
 
     val activtyScope = CoroutineScope(Job())
 
+    val donutAdapter = DonutAdapter()
+
+    val gson = Gson()
+
+    val httpClient = OkHttpClient.Builder()
+        .readTimeout(60, TimeUnit.SECONDS)
+        .writeTimeout(60, TimeUnit.SECONDS)
+        .build()
+
+    val retrofit = Retrofit.Builder()
+        .client(httpClient)
+        .baseUrl(BuildConfig.BASE_URL)
+        .addConverterFactory(GsonConverterFactory.create(gson))
+        .build()
+
+    val donutService = retrofit.create(DonutService::class.java)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         ActivityMainBinding.inflate(layoutInflater).run {
@@ -33,31 +51,18 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
+            paczki.adapter = donutAdapter
+            title.setOnClickListener {
+                getPaczki()
+            }
         }
-        val gson = Gson()
+    }
 
-        val httpClient = OkHttpClient.Builder()
-            .readTimeout(60, TimeUnit.SECONDS)
-            .writeTimeout(60, TimeUnit.SECONDS)
-            .build()
-
-        val retrofit = Retrofit.Builder()
-            .client(httpClient)
-            .baseUrl(BuildConfig.BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .build()
-
-        val donutService = retrofit.create(DonutService::class.java)
-
+    private fun getPaczki() {
         activtyScope.launch {
-            donutService.getDonuts().run {
-                map { it.title }.reduce { donut, acc ->
-                    "$acc:$donut"
-                }
-            }.let { wynik ->
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(this@MainActivity, wynik, Toast.LENGTH_SHORT).show()
-                }
+            withContext(Dispatchers.Main) {
+                donutAdapter.setData(donutService.getDonuts())
+                donutAdapter.notifyDataSetChanged()
             }
         }
     }
