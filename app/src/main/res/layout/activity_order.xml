@@ -12,7 +12,12 @@
     <TextView
         android:id="@+id/zamowienie"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:background="?colorPrimary"
         android:gravity="center" />
+    <fragment
+        android:id="@+id/infofragment1"
+        android:name="com.krzysztofgluczyk.malapaczkarnia.InfoFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 </LinearLayout>
